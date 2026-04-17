@@ -1,0 +1,47 @@
+services:
+  
+  php:
+    build: ./docker/php
+    container_name: encheres_php
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: encheres_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8.0
+    container_name: encheres_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: encheres
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pwd
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: encheres_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
