@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
 {
+    public const STATUS_UNPUBLISHED = 'unpublished';
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_CLOSED = 'closed';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -89,6 +93,23 @@ class Item
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getStatusLabel(): string
+    {
+        if ($this->status === self::STATUS_UNPUBLISHED) {
+            return 'Non publiée';
+        }
+
+        if ($this->status === self::STATUS_PUBLISHED) {
+            return 'Enchère en cours';
+        }
+
+        if ($this->status === self::STATUS_CLOSED) {
+            return 'Clôturée';
+        }
+
+        return 'Inconnu';
     }
 
     /**

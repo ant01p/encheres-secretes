@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de l'article{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 d-flex justify-content-center">
+        
+        <div class="card bg-light mb-3" style="max-width: 20rem;">
+            <div class="card-header"><strong>Prix de départ :</strong>{{ item.startingPrice }}$</div>
+            <div class="card-body">
+                <h4 class="card-title">{{ item.title }}</h4>
+                <p class="card-text">{{ item.description }}</p>
+                <p class="card-text"><strong>Catégorie :</strong>
+                    {% for category in item.categories %} 
+                        {{ category.name }}
+                    {% else %}
+                        <p class="card-text">Aucune catégorie associée.</p>
+                    {% endfor %}
+                </p>
+                <p class="card-text"><strong>Status :</strong> {{ item.statusLabel }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}      

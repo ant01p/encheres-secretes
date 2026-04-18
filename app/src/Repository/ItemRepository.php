@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Item;
+use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,4 +41,29 @@ class ItemRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+   public function findItemsByStatus(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.status IN (:statuses)')
+            ->setParameter('statuses', ['published', 'unpublished
+            '])
+            ->orderBy('i.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findItemsByCategory(Category $category): array
+    {
+        return $this->createQueryBuilder('i')
+            ->innerJoin('i.categories', 'c')
+            ->where('c = :category')
+            ->andWhere('i.status IN (:statuses)')
+            ->setParameter('category', $category)
+            ->setParameter('statuses', ['published', 'closed'])
+            ->orderBy('i.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
