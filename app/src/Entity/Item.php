@@ -43,6 +43,12 @@ class Item
     #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'item')]
     private Collection $offers;
 
+    #[ORM\ManyToOne]
+    private ?User $winner = null;
+
+    #[ORM\Column]
+    private ?float $finalPrice = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -169,6 +175,30 @@ class Item
                 $offer->setItem(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWinner(): ?User
+    {
+        return $this->winner;
+    }
+
+    public function setWinner(?User $winner): static
+    {
+        $this->winner = $winner;
+
+        return $this;
+    }
+
+    public function getFinalPrice(): ?float
+    {
+        return $this->finalPrice;
+    }
+
+    public function setFinalPrice(float $finalPrice): static
+    {
+        $this->finalPrice = $finalPrice;
 
         return $this;
     }

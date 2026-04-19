@@ -32,23 +32,46 @@
                 </p>
 
                 <p class="card-text"><strong>Status :</strong> {{ item.statusLabel }}</p>
+                {% if is_granted('ROLE_ADMIN') %}
+
+                    {% if item.status == 'unpublished' %}
+                        <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-success">
+                            Publier
+                        </a>
+                    {% elseif item.status == 'published' %}
+                        {% if item.offers|length > 0 %}
+                            <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-danger mb-3">
+                                Clôturer
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-warning">
+                                Dépublier
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% endif %}
                 
-                {% if app.user %}
+                {% if app.user and not is_granted('ROLE_ADMIN') and item.status == 'published' %}
                     <p class="card-text"><strong>Faire une offre :</strong></p>
                     {{ form_start(form) }}
                     {{ form_row(form.amount) }}
                     <button class="btn btn-primary mb-3">Enchérir</button>
                     {{ form_end(form) }}
-                    <p class="card-text"><strong>Offres :</strong></p>
-
-                    {% for offer in offers %}
-                        <p>
-                            {{ offer.user.email }} : {{ offer.amount }} €
-                        </p>
-                    {% else %}
-                        <p>Aucune offre</p>
-                    {% endfor %}
                 {% endif %}
+                    <p class="card-text"><strong>Offres :</strong></p>
+                {% for offer in offers %}
+                    <p>
+                        {{ offer.user.email }} : {{ offer.amount }} €
+                    </p>
+                {% else %}
+                    <p>Aucune offre</p>
+                {% endfor %}
+                {% if item.status == 'closed' and item.winner %}
+                    <p><strong>Gagnant :</strong> {{ item.winner.email }}</p>
+                    <p><strong>Prix final :</strong> {{ item.finalPrice }} €</p>
+                {% endif %}
+                
             </div>
         </div>
 

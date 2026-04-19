@@ -20,7 +20,7 @@ final class ItemController extends AbstractController
     #[Route('/', name: 'app_item')]
     public function index(ItemRepository $itemRepository, CategoryRepository $categoryRepository): Response
     {
-        $items = $itemRepository->findItemsByStatus();
+        $items = $itemRepository->findAll();
         $categories = $categoryRepository->findAll();
 
         return $this->render('item/index.html.twig', [
@@ -72,6 +72,60 @@ final class ItemController extends AbstractController
             'item' => $item,
             'form' => $form->createView(),
             'offers' => $item->getOffers(),
+        ]);
+    }
+
+    #[Route('/admin/item/{id}/toggle', name: 'app_admin_item_toggle')]
+    public function toggle(Item $item, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // si unpublished → publier
+        if ($item->getStatus() === Item::STATUS_UNPUBLISHED) {
+            $item->setStatus(Item::STATUS_PUBLISHED);
+        }
+
+        // si published
+        elseif ($item->getStatus() === Item::STATUS_PUBLISHED) {
+
+            // 👉 s'il y a des offres → fermer + choisir gagnant
+            if (count($item->getOffers()) > 0) {
+
+                $bestOffer = null;
+
+                foreach ($item->getOffers() as $offer) {
+                    if ($bestOffer === null || $offer->getAmount() > $bestOffer->getAmount()) {
+                        $bestOffer = $offer;
+                    }
+                }
+
+                $item->setStatus(Item::STATUS_CLOSED);
+                $item->setWinner($bestOffer->getUser());
+                $item->setFinalPrice($bestOffer->getAmount());
+
+            } else {
+                // 👉 sinon → repasser en unpublished
+                $item->setStatus(Item::STATUS_UNPUBLISHED);
+            }
+        }
+
+        $em->flush();
+
+        return $this->redirectToRoute('app_item_show', ['id' => $item->getId()]);
+    }
+
+    #[Route('/published', name: 'app_item_published')]
+    public function published(ItemRepository $itemRepository, CategoryRepository $categoryRepository): Response
+    {
+        $items = $itemRepository->findBy([
+            'status' => 'published'
+        ]);
+
+        $categories = $categoryRepository->findAll();
+
+        return $this->render('item/index.html.twig', [
+            'items' => $items,
+            'categories' => $categories,
         ]);
     }
 }
