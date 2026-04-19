@@ -3,13 +3,26 @@
 {% block title %}Détail de l'article{% endblock %}
 
 {% block body %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <div class="container mt-5 d-flex justify-content-center">
         
         <div class="card bg-light mb-3" style="max-width: 20rem;">
-            <div class="card-header"><strong>Prix de départ :</strong>{{ item.startingPrice }}$</div>
+            <div class="card-header">
+                <strong>Prix de départ :</strong>
+                {{ item.startingPrice }}$
+            </div>
             <div class="card-body">
+
                 <h4 class="card-title">{{ item.title }}</h4>
+
                 <p class="card-text">{{ item.description }}</p>
+
                 <p class="card-text"><strong>Catégorie :</strong>
                     {% for category in item.categories %} 
                         {{ category.name }}
@@ -17,8 +30,27 @@
                         <p class="card-text">Aucune catégorie associée.</p>
                     {% endfor %}
                 </p>
+
                 <p class="card-text"><strong>Status :</strong> {{ item.statusLabel }}</p>
+                
+                {% if app.user %}
+                    <p class="card-text"><strong>Faire une offre :</strong></p>
+                    {{ form_start(form) }}
+                    {{ form_row(form.amount) }}
+                    <button class="btn btn-primary mb-3">Enchérir</button>
+                    {{ form_end(form) }}
+                    <p class="card-text"><strong>Offres :</strong></p>
+
+                    {% for offer in offers %}
+                        <p>
+                            {{ offer.user.email }} : {{ offer.amount }} €
+                        </p>
+                    {% else %}
+                        <p>Aucune offre</p>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
+
     </div>
 {% endblock %}      
