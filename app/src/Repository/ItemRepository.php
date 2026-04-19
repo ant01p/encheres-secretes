@@ -45,8 +45,7 @@ class ItemRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.status IN (:statuses)')
-            ->setParameter('statuses', ['published', 'unpublished
-            '])
+            ->setParameter('statuses', ['published', 'unpublished'])
             ->orderBy('i.id', 'DESC')
             ->getQuery()
             ->getResult()
@@ -60,7 +59,7 @@ class ItemRepository extends ServiceEntityRepository
             ->where('c = :category')
             ->andWhere('i.status IN (:statuses)')
             ->setParameter('category', $category)
-            ->setParameter('statuses', ['published', 'closed'])
+            ->setParameter('statuses', ['published', 'unpublished'])
             ->orderBy('i.id', 'DESC')
             ->getQuery()
             ->getResult()
