@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>{{ title }}</h1>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Titre</label>
+            <input type="text" name="title" class="form-control" value="{{ item ? item.title : '' }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control">{{ item ? item.description : '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Prix de départ</label>
+            <input type="number" name="startingPrice" class="form-control" value="{{ item ? item.startingPrice : '' }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Catégories</label>
+            <select name="categories[]" class="form-select" multiple>
+                {% for category in categories %}
+                    <option value="{{ category.id }}"
+                        {% if item and category in item.categories %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+{% endblock %}

@@ -35,7 +35,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
 
                     {% if item.status == 'unpublished' %}
-                        <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-success">
+                        <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-success mb-3">
                             Publier
                         </a>
                     {% elseif item.status == 'published' %}
@@ -44,11 +44,18 @@
                                 Clôturer
                             </a>
                         {% else %}
-                            <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-warning">
+                            <a href="{{ path('app_admin_item_toggle', {'id': item.id}) }}" class="btn btn-warning mb-3">
                                 Dépublier
                             </a>
                         {% endif %}
                     {% endif %}
+                    <div>
+                    <a href="{{ path('app_admin_item_edit', {'id': item.id}) }}" class="btn btn-success">
+                        Modifier
+                    </a>
+                    <a href="{{ path('app_admin_item_delete', {'id': item.id}) }}" class="btn btn-danger ">
+                        Supprimer
+                    </a></div>
 
                 {% endif %}
                 
